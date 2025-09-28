@@ -16,5 +16,6 @@ class UserModel extends Model
         'username',
         'nama',
         'level_id',
+        'password'
     ];
 }
