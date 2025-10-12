@@ -20,7 +20,7 @@
         <br>
         <label>Level ID</label>
         <input type="number" name="level_id" placeholder="Masukkan Level ID" value="{{ $data->level_id }}">
-        <br><br>
+        <br><br>a
         <input type="submit" class="btn btn-success" value="Ubah">
 
     </form>
