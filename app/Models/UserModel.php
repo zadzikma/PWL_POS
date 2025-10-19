@@ -17,8 +17,8 @@ class UserModel extends Model
     protected $fillable = [
         'username',
         'nama',
-        'level_id',
-        'password'
+        'password',
+        'level_id'
     ];
    public function level(): BelongsTo
 {
