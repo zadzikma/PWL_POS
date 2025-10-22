@@ -46,10 +46,10 @@
         </tr>
       </thead>
     </table>
-  </div> <!-- card-body -->
-</div> <!-- card utama -->
+  </div> 
+</div> 
 
-<!-- ✅ Modal sebaiknya diletakkan DI SINI -->
+
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="true"></div>
 
 
