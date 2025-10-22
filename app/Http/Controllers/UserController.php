@@ -6,6 +6,7 @@ use App\Models\UserModel;
 use App\Models\LevelModel;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\QueryException;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -35,28 +36,28 @@ class UserController extends Controller
     }
 
     public function list(Request $request)
-{
-    $users = UserModel::with('level')->select('user_id', 'username', 'nama', 'level_id');
+    {
+        $users = UserModel::with('level')->select('user_id', 'username', 'nama', 'level_id');
 
-    //Fiter data user berdasarkan level_id
-    if ($request->filled('level_id')) {
-    $users->where('level_id', $request->level_id);
-}
+        //Fiter data user berdasarkan level_id
+        if ($request->filled('level_id')) {
+            $users->where('level_id', $request->level_id);
+        }
 
 
-    return DataTables::of($users)
-        ->addIndexColumn()
-        ->addColumn('aksi', function ($user) {
-            $btn  = '<a href="' . url('/user/' . $user->user_id) . '" class="btn btn-info btn-sm">Detail</a> ';
-            $btn .= '<a href="' . url('/user/' . $user->user_id . '/edit') . '" class="btn btn-warning btn-sm">Edit</a> ';
-            $btn .= '<form class="d-inline-block" method="POST" action="' . url('/user/' . $user->user_id) . '">'
-                . csrf_field() . method_field('DELETE') .
-                '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Apakah Anda yakin menghapus data ini?\');">Hapus</button></form>';
-            return $btn;
-        })
-        ->rawColumns(['aksi'])
-        ->make(true);
-}
+        return DataTables::of($users)
+            ->addIndexColumn()
+            ->addColumn('aksi', function ($user) {
+                $btn  = '<a href="' . url('/user/' . $user->user_id) . '" class="btn btn-info btn-sm">Detail</a> ';
+                $btn .= '<a href="' . url('/user/' . $user->user_id . '/edit') . '" class="btn btn-warning btn-sm">Edit</a> ';
+                $btn .= '<form class="d-inline-block" method="POST" action="' . url('/user/' . $user->user_id) . '">'
+                    . csrf_field() . method_field('DELETE') .
+                    '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Apakah Anda yakin menghapus data ini?\');">Hapus</button></form>';
+                return $btn;
+            })
+            ->rawColumns(['aksi'])
+            ->make(true);
+    }
 
 
     public function create()
@@ -155,18 +156,52 @@ class UserController extends Controller
 
     //menghapus data user
     public function destroy(string $id)
+    {
+        $check = UserModel::find($id);
+        if (!$check) {
+            return redirect('/user')->with('error', 'Data user tidak ditemukan.');
+        }
+
+        try {
+            UserModel::destroy($id);
+            return redirect('/user')->with('success', 'Data user berhasil dihapus.');
+        } catch (QueryException $e) {
+            return redirect('/user')->with('error', 'Data user tidak dapat dihapus karena berelasi dengan data lain.');
+        }
+    }
+    public function createAjax()
+    {
+        $level = LevelModel::select('level_id', 'level_nama')->get();
+        return view('user.create_ajax', compact('level'));
+    }
+
+
+    public function storeAjax(Request $request)
 {
-    $check = UserModel::find($id);
-    if (!$check) {
-        return redirect('/user')->with('error', 'Data user tidak ditemukan.');
+    $validator = Validator::make($request->all(), [
+        'username' => 'required|unique:m_user,username',
+        'nama' => 'required',
+        'password' => 'required',
+        'level_id' => 'required',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => false,
+            'message' => $validator->errors()->first(),
+        ]);
     }
 
-    try {
-        UserModel::destroy($id);
-        return redirect('/user')->with('success', 'Data user berhasil dihapus.');
-    } catch (QueryException $e) {
-        return redirect('/user')->with('error', 'Data user tidak dapat dihapus karena berelasi dengan data lain.');
-    }
+    $user = new \App\Models\UserModel();
+    $user->username = $request->username;
+    $user->nama = $request->nama;
+    $user->password = bcrypt($request->password);
+    $user->level_id = $request->level_id;
+    $user->save();
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Data user berhasil disimpan!',
+    ]);
 }
-
 }

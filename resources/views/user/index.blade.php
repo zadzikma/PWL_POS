@@ -6,6 +6,7 @@
     <h3 class="card-title">{{ $page->title }}</h3>
     <div class="card-tools">
       <a class="btn btn-sm btn-primary mt-1" href="{{ url('user/create') }}">Tambah</a>
+      <button onclick="modalAction('{{ url('user/create_ajax') }}')" class="btn btn-sm btn-success mt-1">Tambah ajax</button>
     </div>
   </div>
 
@@ -16,43 +17,69 @@
     @if (session('error'))
       <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
-    <div class="row">
+
+    <div class="row mb-3">
       <div class="col-md-12">
-      <div class="from-group row">
-        <label class="col-1 control-label col-form-label">Filter:</label>
-        <div class="col-3">
-          <select class ="form-control" id="level_id" name="level_id" required>
-            <option value="">- Semua -</option>
-            @foreach($level as $item)
-              <option value="{{ $item->level_id }}">{{ $item->level_nama }}</option>
-            @endforeach
-          </select>
-          <small class="form-text text-muted">Level Pengguna</small> 
+        <div class="form-group row">
+          <label class="col-1 control-label col-form-label">Filter:</label>
+          <div class="col-3">
+            <select class="form-control" id="level_id" name="level_id" required>
+              <option value="">- Semua -</option>
+              @foreach($level as $item)
+                <option value="{{ $item->level_id }}">{{ $item->level_nama }}</option>
+              @endforeach
+            </select>
+            <small class="form-text text-muted">Level Pengguna</small>
+          </div>
         </div>
       </div>
-      </div>
-    </div>  
-    <table class="table table-borehead table-striped table-hover table-sm" id="table_user">
+    </div>
+
+    <table class="table table-bordered table-striped table-hover table-sm" id="table_user">
       <thead>
-        <tr><th>>No</th>
+        <tr>
+          <th>No</th>
           <th>Username</th>
           <th>Nama</th>
           <th>Level</th>
-          <th>Aksi</th></tr>
+          <th>Aksi</th>
+        </tr>
       </thead>
     </table>
-      
+  </div> <!-- card-body -->
+</div> <!-- card utama -->
+
+<!-- ✅ Modal sebaiknya diletakkan DI SINI -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="true"></div>
+
+
 @endsection
+
 
 @push('js')
 <script>
+function modalAction(url = '') {
+    console.log('Load modal dari URL:', url);
+    $('#myModal').load(url, function(response, status, xhr) {
+        if (status === 'success') {
+            $('#myModal').modal('show');
+        } else {
+            console.error('Gagal load modal:', xhr.status, xhr.statusText);
+        }
+    });
+}
+
+
+ 
+
+var dataUser;
 $(document).ready(function() {
-  $('#table_user').DataTable({
+  dataUser = $('#table_user').DataTable({
       processing: true,
       serverSide: true,
       ajax: {
           url: "{{ url('user/list') }}",
-          type: "GET", // sementara pakai GET (karena POST sempat HTML)
+          type: "GET",
           dataType: "json",
           data: function (d) {
               d.level_id = $('#level_id').val();
@@ -66,7 +93,8 @@ $(document).ready(function() {
           { data: "aksi", name: "aksi", orderable: false, searchable: false }
       ]
   });
-  $('#level_id').on('change',function(){
+
+  $('#level_id').on('change', function(){
       dataUser.ajax.reload();
   });
 });
