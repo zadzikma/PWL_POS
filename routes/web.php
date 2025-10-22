@@ -24,6 +24,8 @@ Route::group(['prefix' => 'user'], function () {
     Route::put('/{id}', [UserController::class, 'update']);
     Route::get('/{id}/edit_ajax', [UserController::class, 'editAjax']);
     Route::put('/{id}/update_ajax', [UserController::class, 'updateAjax']);
+    Route::get('/{id}/delete_ajax', [UserController::class, 'confirm_ajax']); 
+    Route::delete('/{id}/delete_ajax', [UserController::class, 'delete_ajax']); 
     Route::delete('/{id}', [UserController::class, 'destroy']);
 });
 
@@ -31,11 +33,11 @@ Route::group(['prefix' => 'user'], function () {
 Route::group(['prefix' => 'level'], function () {
     Route::get('/', [LevelController::class, 'index']);
     Route::post('/list', [LevelController::class, 'list']);
-    Route::get('/create', [LevelController::class, 'create']); 
-    Route::post('/', [LevelController::class, 'store']);        
+    Route::get('/create', [LevelController::class, 'create']);
+    Route::post('/', [LevelController::class, 'store']);
     Route::get('/{id}/edit', [LevelController::class, 'edit']);
-    Route::put('/{id}', [LevelController::class, 'update']);    
-    Route::delete('/{id}', [LevelController::class, 'destroy']); 
+    Route::put('/{id}', [LevelController::class, 'update']);
+    Route::delete('/{id}', [LevelController::class, 'destroy']);
 });
 
 
@@ -43,11 +45,11 @@ Route::group(['prefix' => 'level'], function () {
 Route::group(['prefix' => 'kategori'], function () {
     Route::get('/', [KategoriController::class, 'index']);
     Route::post('/list', [KategoriController::class, 'list']);
-    Route::get('/create', [KategoriController::class, 'create']);   
-    Route::post('/', [KategoriController::class, 'store']);         
-    Route::get('/{id}/edit', [KategoriController::class, 'edit']);  
-    Route::put('/{id}', [KategoriController::class, 'update']);     
-    Route::delete('/{id}', [KategoriController::class, 'destroy']); 
+    Route::get('/create', [KategoriController::class, 'create']);
+    Route::post('/', [KategoriController::class, 'store']);
+    Route::get('/{id}/edit', [KategoriController::class, 'edit']);
+    Route::put('/{id}', [KategoriController::class, 'update']);
+    Route::delete('/{id}', [KategoriController::class, 'destroy']);
 });
 
 

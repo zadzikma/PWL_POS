@@ -59,18 +59,58 @@
 @push('js')
 <script>
 function modalAction(url = '') {
-    console.log('Load modal dari URL:', url);
     $('#myModal').load(url, function(response, status, xhr) {
         if (status === 'success') {
             $('#myModal').modal('show');
         } else {
-            console.error('Gagal load modal:', xhr.status, xhr.statusText);
+            alert('Gagal load modal: ' + xhr.status + ' ' + xhr.statusText);
         }
     });
 }
 
+function deleteData(url) {
+    Swal.fire({
+        title: 'Apakah Anda yakin?',
+        text: "Data akan dihapus permanen!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, hapus!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: url,
+                type: 'DELETE',
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: response.message
+                        });
+                        $('#table_user').DataTable().ajax.reload(null, false);
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Terjadi Kesalahan!',
+                        text: 'Coba lagi nanti.'
+                    });
+                }
+            });
+        }
+    });
+}
 
- 
 
 var dataUser;
 $(document).ready(function() {
@@ -100,3 +140,4 @@ $(document).ready(function() {
 });
 </script>
 @endpush
+
