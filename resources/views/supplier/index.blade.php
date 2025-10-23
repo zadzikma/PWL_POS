@@ -45,14 +45,15 @@ $(document).ready(function() {
         processing: true,
         serverSide: true,
         ajax: "{{ url('supplier/list') }}",
-        columns: [
-            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-            { data: 'supplier_kode', name: 'supplier_kode' },
-            { data: 'supplier_nama', name: 'supplier_nama' },
-            { data: 'supplier_alamat', name: 'supplier_alamat' },
-            { data: 'supplier_phone', name: 'supplier_phone' },
-            { data: 'aksi', name: 'aksi', orderable: false, searchable: false },
-        ],
+        columns:[
+    { data:"DT_RowIndex", className:"text-center", orderable:false, searchable:false },
+    { data:"supplier_kode" },
+    { data:"supplier_nama" },
+    { data:"supplier_alamat" },
+    { data:"supplier_phone" },
+    { data:"aksi", orderable:false, searchable:false }
+],
+
         order: [[1, 'asc']]
     });
 
