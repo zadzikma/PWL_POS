@@ -68,7 +68,7 @@ Route::group(['prefix' => 'kategori'], function () {
 
 Route::prefix('supplier')->group(function () {
     Route::get('/', [SupplierController::class, 'index']);
-    Route::get('/list', [SupplierController::class, 'list']);
+    Route::post('/list', [SupplierController::class, 'list']);
     Route::get('/create', [SupplierController::class, 'create']);
     Route::post('/', [SupplierController::class, 'store']);
     Route::get('/{id}/edit', [SupplierController::class, 'edit']);
@@ -90,4 +90,7 @@ Route::group(['prefix' => 'barang'], function () {
     Route::get('/{id}/edit', [BarangController::class, 'edit'])->name('barang.edit');
     Route::put('/{id}', [BarangController::class, 'update'])->name('barang.update');
     Route::delete('/{id}', [BarangController::class, 'destroy'])->name('barang.destroy');
+    Route::post('/store-ajax', [BarangController::class, 'storeAjax'])->name('barang.store.ajax');
+    Route::put('/update-ajax/{id}', [BarangController::class, 'updateAjax'])->name('barang.update.ajax');
+
 });
