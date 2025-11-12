@@ -5,12 +5,20 @@ use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\LevelController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\BarangController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 
+Route::pattern('id','[0-9]+');
 
-Route::get('/', [WelcomeController::class, 'index']);
+Route::get('login', [AuthController::class,'login'])->name('login');
+Route::post('login', [AuthController::class,'postlogin']);
+Route::get('logout', [AuthController::class,'logout'])->middleware('auth');
+
+Route::middleware(['auth'])->group(function(){
+
+    Route::get('/', [WelcomeController::class, 'index']);
 
 Route::group(['prefix' => 'user'], function () {
     Route::get('/', [UserController::class, 'index']);
@@ -94,3 +102,7 @@ Route::group(['prefix' => 'barang'], function () {
     Route::put('/update-ajax/{id}', [BarangController::class, 'updateAjax'])->name('barang.update.ajax');
 
 });
+});
+
+
+
